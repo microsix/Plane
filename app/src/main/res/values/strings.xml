@@ -4,5 +4,6 @@
     <string name="app_name">Plane</string>
     <string name="hello_world">Development environment test:</string>
     <string name="action_settings">Settings</string>
+    <string name="check1">lgrush check OK.</string>
 
 </resources>
