@@ -5,6 +5,7 @@
     <string name="hello_world">Hello world</string>
     <string name="action_settings">Plane App Entrance</string>
     <string name="check1">lgrush check OK.</string>
+    <string name="check2">carbonium check OK.</string>
     <string name="Instruction1">Plane app entrance is in Setting menu.</string>
     <string name="Instruction2">This is Development environment test page, please add your result below and push to github.</string>
     <string name="line">-------------------</string>
