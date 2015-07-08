@@ -29,9 +29,13 @@ public class GameView extends View {
     private int CHESS_WHITE = 2;
     private int CHESS_GRAY = 3;
     private int CHESS_RED = 4;
+    private int CHESS_WHITE_SMALL = 5;
     private int chess_flag = 0;//用于记录上一次下的棋子的颜色，1为黑色，2为白色，0是刚开始下棋,上一次没下棋子
 
     private int whichPlane = 1;
+    private boolean lock = false;
+    private int []headX = new int[3];
+    private int []headY = new int[3] ;
 
     public GameView(Context context) {
         super(context);
@@ -87,7 +91,13 @@ public class GameView extends View {
                 if(chess[i][j] == CHESS_RED)
                 {
                     paint.setColor(Color.RED);//白色画笔，画白棋
-                    canvas.drawCircle(startX+i*GRID_WIDTH-GRID_WIDTH/2,startY+j*GRID_WIDTH-GRID_WIDTH/2,GRID_WIDTH/2-3, paint);
+                    //canvas.drawRect();
+                    canvas.drawCircle(startX+i*GRID_WIDTH-GRID_WIDTH/2,startY+j*GRID_WIDTH-GRID_WIDTH/2,GRID_WIDTH/4, paint);
+                }
+                if(chess[i][j] == CHESS_WHITE_SMALL)
+                {
+                    paint.setColor(Color.WHITE);//白色画笔，画白棋
+                    canvas.drawCircle(startX+i*GRID_WIDTH-GRID_WIDTH/2,startY+j*GRID_WIDTH-GRID_WIDTH/2,GRID_WIDTH/4, paint);
                 }
             }
         }
@@ -112,10 +122,48 @@ public class GameView extends View {
 
             switch (whichPlane) {
                 case 1:
-                    if (chess[index_x][index_y] == 0) {
+                    if (chess[index_x][index_y] == 0 && !lock ) {
+                        Log.d(TAG, "0");
+
                         chess[index_x][index_y] = CHESS_WHITE;
-                    } else {
+
+                        if (assign(index_x+1, index_y, CHESS_RED)) {
+                            checkPlane(index_x, index_y, 1, 0);
+                        }
+                        if (assign(index_x-1, index_y, CHESS_RED)) {
+                            checkPlane(index_x, index_y, -1, 0);
+                        }
+                        if (assign(index_x, index_y+1, CHESS_RED)) {
+                            checkPlane(index_x, index_y, 0, 1);
+                        }
+                        if (assign(index_x, index_y-1, CHESS_RED)) {
+                            checkPlane(index_x, index_y, 0, -1);
+                        }
+
+                        headX[0] = index_x;
+                        headY[0] = index_y;
+
+                        lock = true;
+
+                    } else if (chess[index_x][index_y] == CHESS_WHITE) {
+                        Log.d(TAG, "CHESS_WHITE");
                         chess[index_x][index_y] = 0;
+                        if(index_x + 1 <= 10) {
+                            chess[index_x+1][index_y] = 0;
+                        }
+                        if(index_x - 1 >= 1) {
+                            chess[index_x-1][index_y] = 0;
+                        }
+                        if(index_y + 1 <= 10) {
+                            chess[index_x][index_y+1] = 0;
+                        }
+                        if(index_y - 1 >= 1) {
+                            chess[index_x][index_y-1] = 0;
+                        }
+                        lock = false;
+                    } else if (chess[index_x][index_y] == CHESS_RED) {
+                        Log.d(TAG, "CHESS_RED");
+                        createPlane(headX[0], headY[0], index_x - headX[0], index_y - headY[0], CHESS_WHITE);  //waste much time
                     }
                     break;
                 case 2:
@@ -129,6 +177,100 @@ public class GameView extends View {
 
         invalidate();//点击完成后，通知重绘即再次执行onDraw方法
         return super.onTouchEvent(event);
+    }
+
+    private boolean assign(int index_x, int index_y, int chess_value) {
+        if (index_x >= 1 && index_x <= 10 && index_y >=1 && index_y <=10) {
+            chess[index_x][index_y] = chess_value;
+            return true;
+        } else {
+            if (chess_value == 0 ) {   //for reset chess[][]
+                return true;
+            }
+            return  false;
+        }
+    }
+
+    private boolean check(int index_x, int index_y) {
+        if (index_x >= 1 && index_x <= 10 && index_y >=1 && index_y <=10) {
+            return true;
+        } else {
+            return  false;
+        }
+    }
+
+    private void createPlane(int index_x, int index_y, int x, int y, int chess_value) {
+        Log.d(TAG, "createPlane");
+        if(y == 0) {
+            Log.d(TAG, "y=0");
+            if (assign(index_x + x, index_y - 1, chess_value)
+                    && assign(index_x + x, index_y - 2, chess_value)
+                    && assign(index_x + x, index_y + 1, chess_value)
+                    && assign(index_x + x, index_y + 2, chess_value)
+                    && assign(index_x + 2*x, index_y, chess_value)
+                    && assign(index_x + 3*x, index_y, chess_value)
+                    && assign(index_x + 3*x, index_y - 1, chess_value)
+                    && assign(index_x + 3*x, index_y + 1, chess_value)){
+                assign(index_x + 1, index_y, 0);
+                assign(index_x - 1, index_y, 0);
+                assign(index_x, index_y + 1, 0);
+                assign(index_x, index_y - 1, 0);
+                assign(index_x + x, index_y + y, chess_value);
+            } else {
+                Log.d(TAG, "reset");
+                createPlane(index_x, index_y, x, y, chess_value);
+            }
+        } else {   //x = 0
+            Log.d(TAG, "x=0");
+            if (assign(index_x - 1, index_y + y, chess_value)
+                    && assign(index_x - 2, index_y + y, chess_value)
+                    && assign(index_x + 1, index_y + y, chess_value)
+                    && assign(index_x + 2, index_y + y, chess_value)
+                    && assign(index_x, index_y + 2*y, chess_value)
+                    && assign(index_x, index_y + 3*y, chess_value)
+                    && assign(index_x - 1, index_y + 3*y, chess_value)
+                    && assign(index_x + 1, index_y + 3*y, chess_value)){
+                assign(index_x + 1, index_y, 0);
+                assign(index_x - 1, index_y, 0);
+                assign(index_x, index_y + 1, 0);
+                assign(index_x, index_y - 1, 0);
+                assign(index_x + x, index_y + y, chess_value);
+            } else {
+                Log.d(TAG, "reset");
+                createPlane(index_x, index_y, x, y, 0);
+            }
+        }
+    }
+
+    private void checkPlane(int index_x, int index_y, int x, int y) {
+        if(y == 0) {
+            if (check(index_x + x, index_y - 1)
+                    && check(index_x + x, index_y - 2)
+                    && check(index_x + x, index_y + 1)
+                    && check(index_x + x, index_y + 2)
+                    && check(index_x + 2*x, index_y)
+                    && check(index_x + 3*x, index_y)
+                    && check(index_x + 3*x, index_y - 1)
+                    && check(index_x + 3*x, index_y + 1))
+            {
+                ////nothing to do
+            } else {
+                assign(index_x + x , index_y + y, 0);
+            }
+        } else {   //x = 0
+            if (check(index_x - 1, index_y + y)
+                    && check(index_x - 2, index_y + y)
+                    && check(index_x + 1, index_y + y)
+                    && check(index_x + 2, index_y + y)
+                    && check(index_x, index_y + 2*y)
+                    && check(index_x, index_y + 3*y)
+                    && check(index_x - 1, index_y + 3*y)
+                    && check(index_x + 1, index_y - 3*y)){
+                ////nothing to do
+            } else {
+                assign(index_x + x, index_y + y, 0);
+            }
+        }
     }
 
 }
