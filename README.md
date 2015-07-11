@@ -13,9 +13,9 @@ Development enviroment: Android Studio 1.0+ & Android SDK API Level 21+
   0. Install [Android Studio](https://developer.android.com/sdk/index.html)
   0. Install [Git](https://git-scm.com)
   0. Set Git path in the Android Studio
-    - File >> Settings >> Version Control >> Git >> Path to Git executable = `xxxxx/bin/git.exe`
+    - *File* >> *Settings* >> *Version Control* >> *Git* >> *Path to Git executable* = `xxxxx/bin/git.exe`
   0. Sync code from Github
-    - VCS >> Check out project from Version Control >> Github
+    - *VCS* >> *Check out project from Version Control* >> *Github*
   0. Input login information
   0. Input *Vcs Repository URL* = `https://github.com/microsix/Plane.git`
   0. Input *Parent Directory* = `xxx/xxxx`
@@ -23,9 +23,9 @@ Development enviroment: Android Studio 1.0+ & Android SDK API Level 21+
 
 ## Code submit steps
   0. Submit to local
-    - VCS >> Commit Changes
+    - *VCS* >> *Commit Changes*
   0. Upload to Github
-    - VCS >> Git >> Push
+    - *VCS* >> *Git* >> *Push*
  
 ## Official Reference
   - [Markdown syntax](http://daringfireball.net/projects/markdown/syntax) - for the document
