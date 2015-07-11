@@ -10,7 +10,10 @@ Every member can modify it when needed.
 Development enviroment: Android Studio 1.0+ & Android SDK API Level 21+
 
 ## Project import steps
-  0. Install "Android Studio"
+  0. Install [Android Studio](https://developer.android.com/sdk/index.html)
+  0. Install [git](https://git-scm.com)
+  0. Set git path in the [Android Studio]((https://developer.android.com/sdk/index.html))
+    - File > Settings > Version Control > Git > "Path to Git executable" = xxxxx/bin/git.exe
   0. Open and Choose "Check out project from Version Control" -- "Github"
   0. Input login information
   0. Input "Vcs Repository URL" = https://github.com/microsix/Plane.git
