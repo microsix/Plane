@@ -1,12 +1,68 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
-    android:paddingBottom="@dimen/activity_vertical_margin"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
     tools:context="io.github.microsix.plane.PlaneMainActivity">
 
-    <TextView android:text="@string/hello_world" android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+    <RelativeLayout
+        android:id="@+id/rtLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rtLayout_button"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="10dp"
+        android:layout_width="wrap_content"
+        android:layout_height="100dp">
+        <Button
+            android:id="@+id/button_offline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Offline Game"
+            android:enabled="false"
+            android:layout_alignParentBottom="true"/>
+        <Button
+            android:id="@+id/button_online"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Online Game"
+            android:enabled="false"
+            android:layout_toRightOf="@id/button_offline"
+            android:layout_alignBottom="@id/button_offline"
+            android:layout_marginLeft="10dp"/>
+        <Button
+            android:id="@+id/button_clear"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:text="Clear"
+            android:layout_above="@id/button_offline"
+            android:layout_alignRight="@id/button_offline">
+        </Button>
+        <Button
+            android:id="@+id/button_exercise"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Exercise"
+            android:layout_toRightOf="@id/button_clear"
+            android:layout_alignBottom="@id/button_clear"
+            android:layout_marginLeft="10dp"/>
+    </RelativeLayout>
+
+    <LinearLayout
+        android:layout_marginLeft="20dp"
+        android:layout_marginBottom="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/rtLayout_button">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_above="@id/button_clear"
+            android:text="State Detail"
+            />
+    </LinearLayout>
 
 </RelativeLayout>

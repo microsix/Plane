@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.graphics.Point;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.RelativeLayout;
 
 public class PlaneMainActivity extends ActionBarActivity {
 
@@ -21,10 +22,14 @@ public class PlaneMainActivity extends ActionBarActivity {
         display.getSize(size);
         GlobalData.setHeight(size.y);
         GlobalData.setWidth(size.x);
-        View vw = new GameView(this);
-        setContentView(vw);
 
-        //setContentView(R.layout.activity_plane_main);
+
+
+        setContentView(R.layout.activity_plane_main);
+
+        RelativeLayout rtLayout = (RelativeLayout) findViewById(R.id.rtLayout);
+        View vw = new GameView(this);
+        rtLayout.addView(vw);
     }
 
 
