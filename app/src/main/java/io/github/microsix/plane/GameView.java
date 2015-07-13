@@ -12,6 +12,8 @@ import android.graphics.Point;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 
 public class GameView extends View {
@@ -25,10 +27,12 @@ public class GameView extends View {
     private Paint paint = null;
 
     private int[][] chess = new int[GRID_NUM][GRID_NUM];
+    private int[][] gameData = new int[GRID_NUM][GRID_NUM];
     private final int CHESS_BLACK = 3;// point color
     private final int CHESS_WHITE = 1;
     private final int CHESS_GRAY = 2;
     private final int CHESS_RED = 4;
+    private final int GAME_START = 5;
 
     private final int H_START = 0;
     private final int V_START = 8;
@@ -39,8 +43,17 @@ public class GameView extends View {
     private int []headX = new int[4];
     private int []headY = new int[4] ;
 
+    private TextView tv_state;
+    private Button button_clear;
+    private Button button_exercise;
+    private Button button_offline;
+    private Button button_online;
+
+    Context context;
+
     public GameView(Context context) {
         super(context);
+        this.context = context;
 
         paint = new Paint();//实例化一个画笔
         paint.setAntiAlias(true);//设置画笔去锯齿，没有此语句，画的线或图片周围不圆滑
@@ -50,6 +63,68 @@ public class GameView extends View {
         // offset avoid no distance between line and screen edge
         startX = (GRID_MOD+GRID_WIDTH)/2;
         startY = (GRID_MOD+GRID_WIDTH)/2;
+
+        initActivityView();
+    }
+
+    private void initActivityView() {
+        tv_state = (TextView)((PlaneMainActivity)context).findViewById(R.id.tv_state);
+        button_clear = (Button)((PlaneMainActivity)context).findViewById(R.id.button_clear);
+        button_exercise = (Button)((PlaneMainActivity)context).findViewById(R.id.button_exercise);
+        button_offline = (Button)((PlaneMainActivity)context).findViewById(R.id.button_offline);
+        button_online = (Button)((PlaneMainActivity)context).findViewById(R.id.button_online);
+
+        button_clear.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "button_clear");
+                for(int i=1;i<GRID_NUM;i++) {
+                    for(int j=1;j<GRID_NUM;j++) {
+                        chess[i][j] = 0;
+                    }
+                }
+                lock = false;
+                button_offline.setEnabled(false);
+                button_online.setEnabled(false);
+                whichPlane = CHESS_WHITE;
+                tv_state.setText("All cleared");
+                invalidate();
+            }
+        });
+
+        button_exercise.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Log.d(TAG, "button_exercise");
+                tv_state.setText("Sorry, it's still wait for building");
+
+            }
+        });
+
+        button_offline.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                for(int i=1;i<GRID_NUM;i++) {
+                    for(int j=1;j<GRID_NUM;j++) {
+                        gameData[i][j] = chess[i][j];
+                        chess[i][j] = GAME_START;
+                    }
+                }
+                button_offline.setEnabled(false);
+                button_online.setEnabled(false);
+                button_exercise.setEnabled(false);
+                button_clear.setEnabled(false);
+                tv_state.setText("Enjoy the game");
+                invalidate();
+            }
+        });
+
+        button_online.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tv_state.setText("Sorry, it's still wait for building");
+            }
+        });
     }
 
     @Override
@@ -93,8 +168,12 @@ public class GameView extends View {
                 if(chess[i][j] == CHESS_RED)
                 {
                     paint.setColor(Color.RED);//draw red point
-                    //canvas.drawRect();
                     canvas.drawCircle(startX+i*GRID_WIDTH-GRID_WIDTH/2,startY+j*GRID_WIDTH-GRID_WIDTH/2,GRID_WIDTH/4, paint);
+                }
+                if(chess[i][j] == GAME_START)
+                {
+                    paint.setColor(Color.YELLOW);
+                    canvas.drawRect(startX+(i-1)*GRID_WIDTH+0.1f*GRID_WIDTH, startY+(j-1)*GRID_WIDTH+0.1f*GRID_WIDTH, startX+i*GRID_WIDTH-0.1f*GRID_WIDTH, startY+j*GRID_WIDTH-0.1f*GRID_WIDTH, paint);
                 }
             }
         }
@@ -153,6 +232,11 @@ public class GameView extends View {
                     index_x - headX[chess_color], index_y - headY[chess_color], chess_color);
             if (++whichPlane <=3) {
                 lock = false;
+            } else {
+                tv_state.setText("You can start game now");
+                button_online.setEnabled(true);
+                button_offline.setEnabled(true);
+                button_exercise.setEnabled(false);
             }
         }
     }

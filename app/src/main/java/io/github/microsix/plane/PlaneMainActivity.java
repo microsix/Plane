@@ -23,8 +23,6 @@ public class PlaneMainActivity extends ActionBarActivity {
         GlobalData.setHeight(size.y);
         GlobalData.setWidth(size.x);
 
-
-
         setContentView(R.layout.activity_plane_main);
 
         RelativeLayout rtLayout = (RelativeLayout) findViewById(R.id.rtLayout);
