@@ -108,25 +108,14 @@ public class GameView extends View {
             public void onClick(View v) {
                 Log.d(TAG, "button_exercise");
                 tv_state.setText("Sorry, it's still wait for building");
-
+                randomGame();
             }
         });
 
         button_offline.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                for(int i=1;i<GRID_NUM;i++) {
-                    for(int j=1;j<GRID_NUM;j++) {
-                        gameData[i][j] = chess[i][j];
-                        chess[i][j] = GAME_START;
-                    }
-                }
-                button_offline.setEnabled(false);
-                button_online.setEnabled(false);
-                button_exercise.setEnabled(false);
-                button_clear.setEnabled(false);
-                tv_state.setText("Enjoy the game");
-                invalidate();
+                startOfflineGame();
             }
         });
 
@@ -136,6 +125,34 @@ public class GameView extends View {
                 tv_state.setText("Sorry, it's still wait for building");
             }
         });
+    }
+
+    private void startOfflineGame() {
+        for(int i=1;i<GRID_NUM;i++) {
+            for(int j=1;j<GRID_NUM;j++) {
+                gameData[i][j] = chess[i][j];
+                chess[i][j] = GAME_START;
+            }
+        }
+        button_offline.setEnabled(false);
+        button_online.setEnabled(false);
+        button_exercise.setEnabled(false);
+        button_clear.setEnabled(false);
+        tv_state.setText("Enjoy the game");
+        invalidate();
+    }
+
+    private void randomGame() {
+        int randomX, randomY;
+
+        while (building) {
+            randomX = (int)(Math.random()*9) + 1;
+            randomY = (int)(Math.random()*9) + 1;
+            Log.d(TAG, randomX + " " + randomY);
+            process(randomX, randomY, whichPlane);
+        }
+
+        startOfflineGame();
     }
 
     @Override
