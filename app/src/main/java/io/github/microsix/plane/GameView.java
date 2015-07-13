@@ -41,6 +41,10 @@ public class GameView extends View {
     private int whichPlane = CHESS_WHITE;
     private boolean lock = false;
     private boolean building = true;
+    private boolean finish = false;
+
+    private int destroyNumber = 0;
+    private int stepNumber = 0;
 
     private int []headX = new int[4];
     private int []headY = new int[4] ;
@@ -89,7 +93,11 @@ public class GameView extends View {
                 building = true;
                 button_offline.setEnabled(false);
                 button_online.setEnabled(false);
+                button_exercise.setEnabled(true);
                 whichPlane = CHESS_WHITE;
+                finish = false;
+                destroyNumber = 0;
+                stepNumber = 0;
                 tv_state.setText("All cleared");
                 invalidate();
             }
@@ -203,7 +211,7 @@ public class GameView extends View {
 
     private void process(int index_x, int index_y, int chess_color) {
 
-        if (building) {
+        if (!finish && building) {
             if (chess[index_x][index_y] == 0) {
                 Log.d(TAG, "0");
 
@@ -250,8 +258,25 @@ public class GameView extends View {
                     button_exercise.setEnabled(false);
                 }
             }
-        } else {  //not building, start game
-
+        } else if (!finish) {  //not building, start game
+            if (chess[index_x][index_y] == GAME_START) {
+                stepNumber++;
+                if (gameData[index_x][index_y] != 0) {
+                    chess[index_x][index_y] = CHESS_BLACK;
+                } else {
+                    chess[index_x][index_y] = 0;
+                }
+                for (int i = CHESS_WHITE; i <= CHESS_BLACK; i++) {
+                    if (index_x == headX[i] && index_y == headY[i]) {
+                        tv_state.setText( ++destroyNumber + " plane is destroy");
+                    }
+                }
+                if (destroyNumber == 3) {
+                    tv_state.setText("Congratulations! You win the game with " + stepNumber + "steps");
+                    finish = true;
+                    button_clear.setEnabled(true);
+                }
+            }
         }
     }
 
