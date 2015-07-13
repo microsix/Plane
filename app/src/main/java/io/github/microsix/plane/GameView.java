@@ -40,6 +40,8 @@ public class GameView extends View {
 
     private int whichPlane = CHESS_WHITE;
     private boolean lock = false;
+    private boolean building = true;
+
     private int []headX = new int[4];
     private int []headY = new int[4] ;
 
@@ -84,6 +86,7 @@ public class GameView extends View {
                     }
                 }
                 lock = false;
+                building = true;
                 button_offline.setEnabled(false);
                 button_online.setEnabled(false);
                 whichPlane = CHESS_WHITE;
@@ -199,45 +202,65 @@ public class GameView extends View {
     }
 
     private void process(int index_x, int index_y, int chess_color) {
-        if (chess[index_x][index_y] == 0 && !lock ) {
-            Log.d(TAG, "0");
-            chess[index_x][index_y] = chess_color;
 
-            int tempX, tempY;
-            for (int n = 3; n >= 0; n--){
-                tempX = getPoint(SIDE_START + n, index_x, index_y, 0, 0).x;
-                tempY = getPoint(SIDE_START + n, index_x, index_y, 0, 0).y;
-                if (assign(tempX, tempY, CHESS_RED)) {
-                    checkPlane(index_x, index_y, tempX-index_x, tempY-index_y);
+        if (building) {
+            if (chess[index_x][index_y] == 0) {
+                Log.d(TAG, "0");
+
+                if (lock) {
+                    removeHead(headX[chess_color], headY[chess_color]);
+                    lock = false;
+                }
+
+                if (!lock) {
+                    chess[index_x][index_y] = chess_color;
+
+                    int tempX, tempY;
+                    for (int n = 3; n >= 0; n--) {
+                        tempX = getPoint(SIDE_START + n, index_x, index_y, 0, 0).x;
+                        tempY = getPoint(SIDE_START + n, index_x, index_y, 0, 0).y;
+                        if (assign(tempX, tempY, CHESS_RED)) {
+                            checkPlane(index_x, index_y, tempX - index_x, tempY - index_y);
+                        }
+                    }
+
+                    headX[chess_color] = index_x;
+                    headY[chess_color] = index_y;
+
+                    lock = true;
+                }
+
+            } else if (chess[index_x][index_y] == chess_color) {
+                Log.d(TAG, " CHESS COLOR = " + chess_color);
+
+                removeHead(index_x, index_y);
+                lock = false;
+
+            } else if (chess[index_x][index_y] == CHESS_RED) {
+                Log.d(TAG, "CHESS_RED");
+                assignPlane(headX[chess_color], headY[chess_color],
+                        index_x - headX[chess_color], index_y - headY[chess_color], chess_color);
+                if (++whichPlane <= 3) {
+                    lock = false;
+                } else {
+                    building = false;
+                    tv_state.setText("You can start game now");
+                    button_online.setEnabled(true);
+                    button_offline.setEnabled(true);
+                    button_exercise.setEnabled(false);
                 }
             }
+        } else {  //not building, start game
 
-            headX[chess_color] = index_x;
-            headY[chess_color] = index_y;
+        }
+    }
 
-            lock = true;
-        } else if (chess[index_x][index_y] == chess_color) {
-            Log.d(TAG, " CHESS COLOR = " + chess_color);
-            chess[index_x][index_y] = 0;
+    private void removeHead(int index_x, int index_y) {
+        chess[index_x][index_y] = 0;
 
-            for (int n = 3; n >= 0; n--){
-                assign(getPoint(SIDE_START + n, index_x, index_y, 0, 0).x,
-                        getPoint(SIDE_START + n, index_x, index_y, 0, 0).y, 0);
-            }
-
-            lock = false;
-        } else if (chess[index_x][index_y] == CHESS_RED) {
-            Log.d(TAG, "CHESS_RED");
-            assignPlane(headX[chess_color], headY[chess_color],
-                    index_x - headX[chess_color], index_y - headY[chess_color], chess_color);
-            if (++whichPlane <=3) {
-                lock = false;
-            } else {
-                tv_state.setText("You can start game now");
-                button_online.setEnabled(true);
-                button_offline.setEnabled(true);
-                button_exercise.setEnabled(false);
-            }
+        for (int n = 3; n >= 0; n--){
+            assign(getPoint(SIDE_START + n, index_x, index_y, 0, 0).x,
+                    getPoint(SIDE_START + n, index_x, index_y, 0, 0).y, 0);
         }
     }
 
