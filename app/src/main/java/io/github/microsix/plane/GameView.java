@@ -3,6 +3,7 @@ package io.github.microsix.plane;
 /**
  * Created by cai on 2015/6/8.
  */
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -15,6 +16,10 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Arrays;
+
+import bluetooth.BluetoothUtility;
+
 
 public class GameView extends View {
 
@@ -26,6 +31,7 @@ public class GameView extends View {
     private int GRID_NUM = 11;
     private Paint paint = null;
 
+    private int[][] exboard = new int[GRID_NUM][GRID_NUM];
     private int[][] chess = new int[GRID_NUM][GRID_NUM];
     private int[][] gameData = new int[GRID_NUM][GRID_NUM];
     private final int CHESS_BLACK = 3;// point color
@@ -54,6 +60,8 @@ public class GameView extends View {
     private Button button_exercise;
     private Button button_offline;
     private Button button_online;
+    
+    private BluetoothUtility mBluetoothUtility;
 
     Context context;
 
@@ -71,6 +79,7 @@ public class GameView extends View {
         startY = (GRID_MOD+GRID_WIDTH)/2;
 
         initActivityView();
+        mBluetoothUtility = BluetoothUtility.getInstance();
     }
 
     private void initActivityView() {
@@ -98,7 +107,7 @@ public class GameView extends View {
                 finish = false;
                 destroyNumber = 0;
                 stepNumber = 0;
-                tv_state.setText("All cleared");
+//                tv_state.setText("All cleared");
                 invalidate();
             }
         });
@@ -107,7 +116,7 @@ public class GameView extends View {
             @Override
             public void onClick(View v) {
                 Log.d(TAG, "button_exercise");
-                tv_state.setText("Sorry, it's still wait for building");
+//                tv_state.setText("Sorry, it's still wait for building");
                 randomGame();
             }
         });
@@ -122,9 +131,27 @@ public class GameView extends View {
         button_online.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                tv_state.setText("Sorry, it's still wait for building");
+//                tv_state.setText("Sorry, it's still wait for building");
+                startOnlineGame(getBoard());
             }
         });
+    }
+    
+    private void startOnlineGame(int[][] exchessboard) {
+        if (exchessboard != null) {
+            for(int i=1;i<GRID_NUM;i++) {
+                for(int j=1;j<GRID_NUM;j++) {
+                    gameData[i][j] = exchessboard[i][j];
+                    chess[i][j] = GAME_START;
+                }
+            }
+        }
+        button_offline.setEnabled(false);
+        button_online.setEnabled(false);
+        button_exercise.setEnabled(false);
+        button_clear.setEnabled(false);
+//        tv_state.setText("Enjoy the game");
+        invalidate();
     }
 
     private void startOfflineGame() {
@@ -269,10 +296,11 @@ public class GameView extends View {
                     lock = false;
                 } else {
                     building = false;
-                    tv_state.setText("You can start game now");
+//                    tv_state.setText("You can start game now");
                     button_online.setEnabled(true);
                     button_offline.setEnabled(true);
                     button_exercise.setEnabled(false);
+                    ExchangeBoard();
                 }
             }
         } else if (!finish) {  //not building, start game
@@ -399,6 +427,28 @@ public class GameView extends View {
                 break;
             }
         }
+    }
+    
+    private void ExchangeBoard() {
+        boolean sendstatus = mBluetoothUtility.sendMessage(context, chess);
+        if (sendstatus) {
+            mBluetoothUtility.sendMessage(context, chess);
+        }
+    }
+    private int[][] getBoard() {
+        int[][] result = new int[GRID_NUM][GRID_NUM];
+        result = mBluetoothUtility.getExChessBoard();
+        Log.i("sy__test", "result = "+Arrays.deepToString(result));
+        return result;
+    }
+    
+    public void enableOnline() {
+        Log.i("sy__test", "enableOnline");
+        button_online.setEnabled(true);
+    }
+    
+    public void setConnectedStatus(String connstatus) {
+        tv_state.setText(connstatus);
     }
 }
 

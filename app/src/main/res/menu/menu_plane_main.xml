@@ -1,9 +1,24 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="io.github.microsix.plane.PlaneMainActivity">
+    <item
+        android:id="@+id/secure_connect_scan"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/secure_connect"
+        />
+    <item
+        android:id="@+id/insecure_connect_scan"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/insecure_connect"/>
+    <item
+        android:id="@+id/discoverable"
+        android:showAsAction="ifRoom|withText"
+        android:title="@string/discoverable"/>
     <item android:id="@+id/settings_help" android:title="Help"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="100" 
+        android:showAsAction="never" />
     <item android:id="@+id/settings_reset" android:title="Reset"
-        android:orderInCategory="100" app:showAsAction="never" />
+        android:orderInCategory="100" 
+        android:showAsAction="never" />
+    
 </menu>
