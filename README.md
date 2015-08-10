@@ -23,7 +23,7 @@ Development enviroment: Android Studio 1.0+ & Android SDK API Level 21+
 
 ## Code submit steps
   0. Submit to local
-    - *VCS* >> *Commit Changes*
+    - *VCS* >> *Commit Changes* (If the option doesn't exist, please click *Enable Version Control Integration* at first)
   0. Upload to Github
     - *VCS* >> *Git* >> *Push*
  
